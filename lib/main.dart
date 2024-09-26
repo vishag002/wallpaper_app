@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/carousel_controller.dart';
+import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/view/home_screen.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => CarouselControllerProvider()),
+    ChangeNotifierProvider(create: (_) => WallpaperProvider()),
   ], child: const MyApp()));
 }
 
