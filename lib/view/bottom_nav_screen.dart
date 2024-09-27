@@ -22,7 +22,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: theme.primary,
       body: IndexedStack(
         index: _currentIndex,
         children: [
@@ -35,17 +38,24 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         ],
       ),
       bottomNavigationBar: AnimatedContainer(
+        color: Colors.transparent,
         duration: Duration(milliseconds: 1000),
         curve: Curves.fastLinearToSlowEaseIn,
         height: visible ? kBottomNavigationBarHeight : 0,
         child: Wrap(
           children: [
             BottomNavigationBar(
+              elevation: 0,
+              selectedItemColor: theme.secondary,
+              unselectedItemColor: Colors.grey,
+              backgroundColor: theme.primary.withOpacity(.5),
               currentIndex: _currentIndex, // Set the current tab index
               onTap: _onTabTapped, // Handle tab selection
               items: const [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
+                  icon: Icon(
+                    Icons.home,
+                  ),
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(

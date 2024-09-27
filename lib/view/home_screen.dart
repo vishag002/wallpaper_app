@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
+import 'package:wallpaper_app/utilis/text_const.dart';
 import 'package:wallpaper_app/widget/liked_tab.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
 
@@ -10,9 +11,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: theme.primary,
         appBar: AppBar(
           toolbarHeight: 90,
           centerTitle: true,
@@ -22,6 +26,7 @@ class HomeScreen extends StatelessWidget {
           ),
           bottom: TabBar(
             //  dividerColor: Colors.orange,
+            labelStyle: TextStyles.body.copyWith(color: theme.secondary),
             indicatorColor: Colors.deepOrange,
             indicatorPadding: EdgeInsets.only(bottom: 5),
             tabs: [

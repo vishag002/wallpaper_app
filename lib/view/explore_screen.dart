@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/carousel_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
+import 'package:wallpaper_app/utilis/text_const.dart';
 import 'package:wallpaper_app/view/demo.dart';
 import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
@@ -95,6 +96,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   return Text(
                     imageTitle[provider.currentIndex],
                     textAlign: TextAlign.center,
+                    style: TextStyles.title.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   );
                 },
               ),

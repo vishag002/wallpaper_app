@@ -1,14 +1,21 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/carousel_controller.dart';
+import 'package:wallpaper_app/controller/theme_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
+import 'package:wallpaper_app/utilis/color_const.dart';
 import 'package:wallpaper_app/view/splash_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => CarouselControllerProvider()),
     ChangeNotifierProvider(create: (_) => WallpaperProvider()),
+    ChangeNotifierProvider(create: (_) => ThemeProvider()),
   ], child: const MyApp()));
 }
 
@@ -18,29 +25,30 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return AdaptiveTheme(
+          light: lightTheme,
+          dark: darkTheme,
+          initial: themeProvider.themeMode,
+          builder: (light, dark) => AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.transparent,
+              statusBarColor: Colors.transparent,
+              systemNavigationBarDividerColor: Colors.transparent,
+            ),
+            child: GetMaterialApp(
+              theme: light,
+              darkTheme: dark,
+              themeMode: themeProvider.themeMode == AdaptiveThemeMode.dark
+                  ? ThemeMode.dark
+                  : ThemeMode.light,
+              debugShowCheckedModeBanner: false,
+              home: SplashScreen(),
+            ),
+          ),
+        );
+      },
     );
   }
 }
