@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 
 class LikedTab extends StatelessWidget {
-  const LikedTab({Key? key}) : super(key: key);
+  const LikedTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class LikedTab extends StatelessWidget {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
-              Get.to(() => WallpaperViewScreen());
+              Get.to(() => const WallpaperViewScreen());
             },
             child: Column(
               children: [
