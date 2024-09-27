@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -10,19 +11,50 @@ import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
 
 class ExploreScreen extends StatefulWidget {
-  ExploreScreen({super.key});
+  final VoidCallback showNavigation;
+  final VoidCallback hideNavigation;
+  ExploreScreen(
+      {super.key, required this.showNavigation, required this.hideNavigation});
 
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
+  ScrollController scrollController = ScrollController();
+  //
   void initState() {
     super.initState();
     // Fetch wallpapers when the screen is first built
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         context.read<WallpaperProvider>().fetchWallpapers();
+      },
+    );
+    scrollController.addListener(
+      () {
+        if (scrollController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          widget.showNavigation();
+        } else {
+          widget.hideNavigation();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    scrollController.removeListener(
+      () {
+        if (scrollController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          widget.showNavigation();
+        } else {
+          widget.hideNavigation();
+        }
       },
     );
   }
@@ -49,6 +81,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
+        controller: scrollController,
         slivers: [
           SliverAppBar(
             expandedHeight: MediaQuery.of(context).size.height / 2.64,

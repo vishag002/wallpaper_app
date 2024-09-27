@@ -21,8 +21,11 @@ class HomeScreen extends StatelessWidget {
             radius: 40,
           ),
           bottom: TabBar(
+            //  dividerColor: Colors.orange,
+            indicatorColor: Colors.deepOrange,
+            indicatorPadding: EdgeInsets.only(bottom: 5),
             tabs: [
-              Tab(text: 'Suggested'),
+              Tab(text: 'For You'),
               Tab(text: 'Liked'),
               Tab(text: 'Library'),
             ],
@@ -52,8 +55,7 @@ Widget expandedWidget(BuildContext context) {
             mainAxisSpacing: 15,
             crossAxisSpacing: 15,
             children: List.generate(
-              provider.wallpapers!.length +
-                  2, // +2 for the collection containers
+              provider.wallpapers!.length + 2,
               (index) {
                 bool isCollectionContainer = index == 0 || index == 10;
                 return InkWell(
