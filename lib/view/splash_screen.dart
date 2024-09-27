@@ -1,7 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:wallpaper_app/view/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:wallpaper_app/controller/wallpaper_controller.dart';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -12,17 +12,29 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-        Duration(seconds: 5),
-        () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomeScreen())));
+
+    // Prefetch wallpapers in the splash screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _prefetchData();
+    });
+  }
+
+  // Method to fetch wallpapers and navigate to HomeScreen
+  void _prefetchData() async {
+    await context.read<WallpaperProvider>().fetchWallpapers();
+
+    // Navigate to HomeScreen after fetching data
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(), // Show a loading indicator
       ),
     );
   }

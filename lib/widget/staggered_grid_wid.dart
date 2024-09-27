@@ -19,7 +19,10 @@ class Tile extends StatelessWidget {
     return Consumer<WallpaperProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+              child: CircularProgressIndicator(
+            color: Colors.transparent,
+          ));
         } else if (provider.errorMessage != null) {
           return Center(child: Text(provider.errorMessage!));
         } else if (provider.wallpapers != null &&

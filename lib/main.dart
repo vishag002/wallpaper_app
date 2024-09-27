@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/carousel_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
-import 'package:wallpaper_app/view/home_screen.dart';
+import 'package:wallpaper_app/view/splash_screen.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }
