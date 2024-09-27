@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
-import 'home_screen.dart';
+import 'package:wallpaper_app/view/bottom_nav_screen.dart';
+import 'explore_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigate to HomeScreen after fetching data
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => BottomNavScreen()),
     );
   }
 

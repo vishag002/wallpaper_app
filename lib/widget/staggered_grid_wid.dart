@@ -6,7 +6,7 @@ import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 class Tile extends StatelessWidget {
   final int index;
 
-  const Tile({Key? key, required this.index}) : super(key: key);
+  const Tile({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
