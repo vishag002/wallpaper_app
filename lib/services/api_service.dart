@@ -2,10 +2,13 @@ import 'package:http/http.dart' as http;
 import 'package:wallpaper_app/model/api_model.dart';
 
 class WallpaperService {
-  Future<List<MyClass>> getMyClass() async {
+  // Method to fetch images with pagination support
+  Future<List<MyClass>> getMyClass({int page = 1, int perPage = 30}) async {
     var client = http.Client();
+    // Update the URL with page and per_page parameters
     var uri = Uri.parse(
-        'https://api.unsplash.com/photos/?client_id=eAVunQXqeEpiTSwpCeYLfhse864BVP5qufx74IORWjI');
+        'https://api.unsplash.com/photos/?client_id=eAVunQXqeEpiTSwpCeYLfhse864BVP5qufx74IORWjI&page=$page&per_page=$perPage');
+
     try {
       var response = await client.get(uri);
       print("Status Code: ${response.statusCode}");

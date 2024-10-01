@@ -7,8 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/carousel_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/utilis/text_const.dart';
-import 'package:wallpaper_app/view/collection_screen.dart';
-import 'package:wallpaper_app/view/demo.dart';
 import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
 
@@ -27,7 +25,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   //
   void initState() {
     super.initState();
-    // Fetch wallpapers when the screen is first built
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         context.read<WallpaperProvider>().fetchWallpapers();

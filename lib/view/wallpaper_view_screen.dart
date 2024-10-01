@@ -3,6 +3,7 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:get/get.dart';
 import 'package:wallpaper_app/model/api_model.dart';
 import 'package:wallpaper_app/utilis/text_const.dart';
+import 'package:wallpaper_app/view/user_screen.dart';
 
 class WallpaperViewScreen extends StatelessWidget {
   final MyClass wallpaper;
@@ -119,18 +120,23 @@ class WallpaperViewScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage:
-                      NetworkImage(wallpaper.user?.profileImage?.medium ?? ''),
-                ),
-                SizedBox(width: 10),
-                Text(wallpaper.user?.username ?? "Unknown"),
-              ],
+            InkWell(
+              onTap: () {
+                Get.to(ArtistProfileScreen());
+              },
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(
+                        wallpaper.user?.profileImage?.medium ?? ''),
+                  ),
+                  SizedBox(width: 10),
+                  Text(wallpaper.user?.username ?? "Unknown"),
+                ],
+              ),
             ),
-            Text(wallpaper.description ?? "No description available"),
+            Text(wallpaper.altDescription ?? "No description available"),
             Text("Created at: ${wallpaper.createdAt?.toString() ?? 'Unknown'}"),
             SizedBox(height: 50),
             Row(
