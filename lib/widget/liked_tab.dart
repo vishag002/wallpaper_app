@@ -19,7 +19,8 @@ class LikedTab extends StatelessWidget {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
-              Get.to(() => const WallpaperViewScreen());
+              //to-do
+              //   Get.to(() =>  WallpaperViewScreen());
             },
             child: Column(
               children: [
