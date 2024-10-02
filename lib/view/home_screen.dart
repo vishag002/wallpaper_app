@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(
           toolbarHeight: 90,
           centerTitle: true,
-          title: CircleAvatar(
+          title: const CircleAvatar(
             backgroundColor: Colors.amber,
             radius: 40,
           ),
@@ -62,7 +62,7 @@ Widget expandedWidget(BuildContext context) {
             children: List.generate(
               provider.wallpapers!.length + 2,
               (index) {
-                bool isCollectionContainer = index == 0 || index == 10;
+                bool isCollectionContainer = index == 0;
                 return InkWell(
                   onTap: () {
                     if (isCollectionContainer) {

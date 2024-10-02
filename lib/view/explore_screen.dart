@@ -5,15 +5,17 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/carousel_controller.dart';
+import 'package:wallpaper_app/controller/collection_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/utilis/text_const.dart';
+import 'package:wallpaper_app/view/demo2.dart';
 import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
 
 class ExploreScreen extends StatefulWidget {
   final VoidCallback showNavigation;
   final VoidCallback hideNavigation;
-  ExploreScreen(
+  const ExploreScreen(
       {super.key, required this.showNavigation, required this.hideNavigation});
 
   @override
@@ -28,6 +30,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         context.read<WallpaperProvider>().fetchWallpapers();
+        context.read<CollectionProvider>().fetchCollections();
       },
     );
     scrollController.addListener(
@@ -209,7 +212,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   //expanded widget
   Widget expandedWidget(BuildContext context) {
-    final provider = Provider.of<WallpaperProvider>(context, listen: false);
+    final wallpaperProvider =
+        Provider.of<WallpaperProvider>(context, listen: false);
+    final collectionProvider =
+        Provider.of<WallpaperProvider>(context, listen: false);
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10),
@@ -218,10 +224,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
           mainAxisSpacing: 15,
           crossAxisSpacing: 15,
           children: List.generate(
-            provider.wallpapers!.length * 2,
+            wallpaperProvider.wallpapers!.length * 2,
             (index) => InkWell(
               onTap: () {
-                _handleItemTap(index, provider);
+                _handleItemTap(index, wallpaperProvider);
               },
               child: Tile(index: index),
             ),
@@ -238,7 +244,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           WallpaperViewScreen(wallpaper: provider.wallpapers![index ~/ 2]));
     } else {
       print("Image container pressed at index: $index");
-      // Get.to(() => CollectionScreen());
+      Get.to(() => CollectionListView());
     }
   }
 }

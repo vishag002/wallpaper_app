@@ -1,15 +1,10 @@
 // To parse this JSON data, do
-//
-//     final collectionClass = collectionClassFromJson(jsonString);
-
 import 'dart:convert';
 
-List<CollectionClass> collectionClassFromJson(String str) =>
-    List<CollectionClass>.from(
-        json.decode(str).map((x) => CollectionClass.fromJson(x)));
-
-String collectionClassToJson(List<CollectionClass> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+List<CollectionClass> collectionClassFromJson(String str) {
+  final List<dynamic> jsonList = json.decode(str);
+  return jsonList.map((x) => CollectionClass.fromJson(x)).toList();
+}
 
 class CollectionClass {
   String? id;
@@ -46,61 +41,41 @@ class CollectionClass {
     this.previewPhotos,
   });
 
-  factory CollectionClass.fromJson(Map<String, dynamic> json) =>
-      CollectionClass(
-        id: json["id"],
-        title: json["title"],
-        description: json["description"],
-        publishedAt: json["published_at"] == null
-            ? null
-            : DateTime.parse(json["published_at"]),
-        lastCollectedAt: json["last_collected_at"] == null
-            ? null
-            : DateTime.parse(json["last_collected_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
-        featured: json["featured"],
-        totalPhotos: json["total_photos"],
-        private: json["private"],
-        shareKey: json["share_key"],
-        tags: json["tags"] == null
-            ? []
-            : List<Tag>.from(json["tags"]!.map((x) => Tag.fromJson(x))),
-        links: json["links"] == null
-            ? null
-            : CollectionClassLinks.fromJson(json["links"]),
-        user: json["user"] == null ? null : User.fromJson(json["user"]),
-        coverPhoto: json["cover_photo"] == null
-            ? null
-            : CollectionClassCoverPhoto.fromJson(json["cover_photo"]),
-        previewPhotos: json["preview_photos"] == null
-            ? []
-            : List<PreviewPhoto>.from(
-                json["preview_photos"]!.map((x) => PreviewPhoto.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "description": description,
-        "published_at": publishedAt?.toIso8601String(),
-        "last_collected_at": lastCollectedAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "featured": featured,
-        "total_photos": totalPhotos,
-        "private": private,
-        "share_key": shareKey,
-        "tags": tags == null
-            ? []
-            : List<dynamic>.from(tags!.map((x) => x.toJson())),
-        "links": links?.toJson(),
-        "user": user?.toJson(),
-        "cover_photo": coverPhoto?.toJson(),
-        "preview_photos": previewPhotos == null
-            ? []
-            : List<dynamic>.from(previewPhotos!.map((x) => x.toJson())),
-      };
+  factory CollectionClass.fromJson(Map<String, dynamic> json) {
+    return CollectionClass(
+      id: json["id"]?.toString(),
+      title: json["title"]?.toString(),
+      description: json["description"]?.toString(),
+      publishedAt: json["published_at"] == null
+          ? null
+          : DateTime.tryParse(json["published_at"].toString()),
+      lastCollectedAt: json["last_collected_at"] == null
+          ? null
+          : DateTime.tryParse(json["last_collected_at"].toString()),
+      updatedAt: json["updated_at"] == null
+          ? null
+          : DateTime.tryParse(json["updated_at"].toString()),
+      featured: json["featured"] == null ? null : json["featured"] as bool,
+      totalPhotos:
+          json["total_photos"] == null ? null : json["total_photos"] as int,
+      private: json["private"] == null ? null : json["private"] as bool,
+      shareKey: json["share_key"]?.toString(),
+      tags: json["tags"] == null
+          ? []
+          : List<Tag>.from(json["tags"].map((x) => Tag.fromJson(x))),
+      links: json["links"] == null
+          ? null
+          : CollectionClassLinks.fromJson(json["links"]),
+      user: json["user"] == null ? null : User.fromJson(json["user"]),
+      coverPhoto: json["cover_photo"] == null
+          ? null
+          : CollectionClassCoverPhoto.fromJson(json["cover_photo"]),
+      previewPhotos: json["preview_photos"] == null
+          ? []
+          : List<PreviewPhoto>.from(
+              json["preview_photos"].map((x) => PreviewPhoto.fromJson(x))),
+    );
+  }
 }
 
 class CollectionClassCoverPhoto {
@@ -194,35 +169,6 @@ class CollectionClassCoverPhoto {
         assetType: assetTypeValues.map[json["asset_type"]]!,
         user: json["user"] == null ? null : User.fromJson(json["user"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "slug": slug,
-        "alternative_slugs": alternativeSlugs?.toJson(),
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "promoted_at": promotedAt?.toIso8601String(),
-        "width": width,
-        "height": height,
-        "color": color,
-        "blur_hash": blurHash,
-        "description": description,
-        "alt_description": altDescription,
-        "breadcrumbs": breadcrumbs == null
-            ? []
-            : List<dynamic>.from(breadcrumbs!.map((x) => x)),
-        "urls": urls?.toJson(),
-        "links": links?.toJson(),
-        "likes": likes,
-        "liked_by_user": likedByUser,
-        "current_user_collections": currentUserCollections == null
-            ? []
-            : List<dynamic>.from(currentUserCollections!.map((x) => x)),
-        "sponsorship": sponsorship,
-        "topic_submissions": topicSubmissions?.toJson(),
-        "asset_type": assetTypeValues.reverse[assetType],
-        "user": user?.toJson(),
-      };
 }
 
 class AlternativeSlugs {
@@ -257,17 +203,6 @@ class AlternativeSlugs {
         de: json["de"],
         pt: json["pt"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "en": en,
-        "es": es,
-        "ja": ja,
-        "fr": fr,
-        "it": it,
-        "ko": ko,
-        "de": de,
-        "pt": pt,
-      };
 }
 
 enum AssetType { PHOTO }
@@ -294,13 +229,6 @@ class CoverPhotoLinks {
         download: json["download"],
         downloadLocation: json["download_location"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "self": self,
-        "html": html,
-        "download": download,
-        "download_location": downloadLocation,
-      };
 }
 
 class PurpleTopicSubmissions {
@@ -327,13 +255,6 @@ class PurpleTopicSubmissions {
             ? null
             : Nature.fromJson(json["textures-patterns"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "wallpapers": wallpapers?.toJson(),
-        "travel": travel?.toJson(),
-        "nature": nature?.toJson(),
-        "textures-patterns": texturesPatterns?.toJson(),
-      };
 }
 
 class Nature {
@@ -351,11 +272,6 @@ class Nature {
             ? null
             : DateTime.parse(json["approved_on"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "status": statusValues.reverse[status],
-        "approved_on": approvedOn?.toIso8601String(),
-      };
 }
 
 enum Status { APPROVED }
@@ -372,10 +288,6 @@ class Travel {
   factory Travel.fromJson(Map<String, dynamic> json) => Travel(
         status: json["status"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "status": status,
-      };
 }
 
 class Urls {
@@ -403,15 +315,6 @@ class Urls {
         thumb: json["thumb"],
         smallS3: json["small_s3"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "raw": raw,
-        "full": full,
-        "regular": regular,
-        "small": small,
-        "thumb": thumb,
-        "small_s3": smallS3,
-      };
 }
 
 class User {
@@ -491,31 +394,6 @@ class User {
         forHire: json["for_hire"],
         social: json["social"] == null ? null : Social.fromJson(json["social"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "updated_at": updatedAt?.toIso8601String(),
-        "username": username,
-        "name": name,
-        "first_name": firstName,
-        "last_name": lastName,
-        "twitter_username": twitterUsername,
-        "portfolio_url": portfolioUrl,
-        "bio": bio,
-        "location": location,
-        "links": links?.toJson(),
-        "profile_image": profileImage?.toJson(),
-        "instagram_username": instagramUsername,
-        "total_collections": totalCollections,
-        "total_likes": totalLikes,
-        "total_photos": totalPhotos,
-        "total_promoted_photos": totalPromotedPhotos,
-        "total_illustrations": totalIllustrations,
-        "total_promoted_illustrations": totalPromotedIllustrations,
-        "accepted_tos": acceptedTos,
-        "for_hire": forHire,
-        "social": social?.toJson(),
-      };
 }
 
 class UserLinks {
@@ -546,16 +424,6 @@ class UserLinks {
         following: json["following"],
         followers: json["followers"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "self": self,
-        "html": html,
-        "photos": photos,
-        "likes": likes,
-        "portfolio": portfolio,
-        "following": following,
-        "followers": followers,
-      };
 }
 
 class ProfileImage {
@@ -574,12 +442,6 @@ class ProfileImage {
         medium: json["medium"],
         large: json["large"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "small": small,
-        "medium": medium,
-        "large": large,
-      };
 }
 
 class Social {
@@ -601,13 +463,6 @@ class Social {
         twitterUsername: json["twitter_username"],
         paypalEmail: json["paypal_email"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "instagram_username": instagramUsername,
-        "portfolio_url": portfolioUrl,
-        "twitter_username": twitterUsername,
-        "paypal_email": paypalEmail,
-      };
 }
 
 class CollectionClassLinks {
@@ -630,13 +485,6 @@ class CollectionClassLinks {
         photos: json["photos"],
         related: json["related"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "self": self,
-        "html": html,
-        "photos": photos,
-        "related": related,
-      };
 }
 
 class PreviewPhoto {
@@ -671,40 +519,23 @@ class PreviewPhoto {
         assetType: assetTypeValues.map[json["asset_type"]]!,
         urls: json["urls"] == null ? null : Urls.fromJson(json["urls"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "slug": slug,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "blur_hash": blurHash,
-        "asset_type": assetTypeValues.reverse[assetType],
-        "urls": urls?.toJson(),
-      };
 }
 
 class Tag {
   Type? type;
   String? title;
-  Source? source;
 
   Tag({
     this.type,
     this.title,
-    this.source,
   });
 
   factory Tag.fromJson(Map<String, dynamic> json) => Tag(
-        type: typeValues.map[json["type"]]!,
-        title: json["title"],
-        source: json["source"] == null ? null : Source.fromJson(json["source"]),
+        type: json["type"] == null
+            ? null
+            : typeValues.map[json["type"].toString()],
+        title: json["title"]?.toString(),
       );
-
-  Map<String, dynamic> toJson() => {
-        "type": typeValues.reverse[type],
-        "title": title,
-        "source": source?.toJson(),
-      };
 }
 
 class Source {
@@ -742,17 +573,6 @@ class Source {
             : SourceCoverPhoto.fromJson(json["cover_photo"]),
         affiliateSearchQuery: json["affiliate_search_query"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "ancestry": ancestry?.toJson(),
-        "title": title,
-        "subtitle": subtitle,
-        "description": description,
-        "meta_title": metaTitle,
-        "meta_description": metaDescription,
-        "cover_photo": coverPhoto?.toJson(),
-        "affiliate_search_query": affiliateSearchQuery,
-      };
 }
 
 class Ancestry {
@@ -775,12 +595,6 @@ class Ancestry {
             ? null
             : Category.fromJson(json["subcategory"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "type": type?.toJson(),
-        "category": category?.toJson(),
-        "subcategory": subcategory?.toJson(),
-      };
 }
 
 class Category {
@@ -796,11 +610,6 @@ class Category {
         slug: json["slug"],
         prettySlug: json["pretty_slug"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "slug": slug,
-        "pretty_slug": prettySlug,
-      };
 }
 
 class SourceCoverPhoto {
@@ -901,37 +710,6 @@ class SourceCoverPhoto {
         plus: json["plus"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "slug": slug,
-        "alternative_slugs": alternativeSlugs?.toJson(),
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "promoted_at": promotedAt?.toIso8601String(),
-        "width": width,
-        "height": height,
-        "color": color,
-        "blur_hash": blurHash,
-        "description": description,
-        "alt_description": altDescription,
-        "breadcrumbs": breadcrumbs == null
-            ? []
-            : List<dynamic>.from(breadcrumbs!.map((x) => x.toJson())),
-        "urls": urls?.toJson(),
-        "links": links?.toJson(),
-        "likes": likes,
-        "liked_by_user": likedByUser,
-        "current_user_collections": currentUserCollections == null
-            ? []
-            : List<dynamic>.from(currentUserCollections!.map((x) => x)),
-        "sponsorship": sponsorship,
-        "topic_submissions": topicSubmissions?.toJson(),
-        "asset_type": assetTypeValues.reverse[assetType],
-        "premium": premium,
-        "plus": plus,
-        "user": user?.toJson(),
-      };
 }
 
 class Breadcrumb {
@@ -953,13 +731,6 @@ class Breadcrumb {
         index: json["index"],
         type: typeValues.map[json["type"]]!,
       );
-
-  Map<String, dynamic> toJson() => {
-        "slug": slug,
-        "title": title,
-        "index": index,
-        "type": typeValues.reverse[type],
-      };
 }
 
 enum Type { LANDING_PAGE, SEARCH }
@@ -1003,15 +774,6 @@ class FluffyTopicSubmissions {
             ? null
             : Nature.fromJson(json["textures-patterns"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "architecture-interior": architectureInterior?.toJson(),
-        "color-of-water": colorOfWater?.toJson(),
-        "wallpapers": wallpapers?.toJson(),
-        "nature": nature?.toJson(),
-        "current-events": currentEvents?.toJson(),
-        "textures-patterns": texturesPatterns?.toJson(),
-      };
 }
 
 class EnumValues<T> {

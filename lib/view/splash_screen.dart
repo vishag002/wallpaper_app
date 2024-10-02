@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/view/bottom_nav_screen.dart';
-import 'explore_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

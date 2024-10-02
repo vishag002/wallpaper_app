@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/carousel_controller.dart';
+import 'package:wallpaper_app/controller/collection_controller.dart';
 import 'package:wallpaper_app/controller/theme_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/utilis/color_const.dart';
@@ -15,6 +16,7 @@ void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => CarouselControllerProvider()),
     ChangeNotifierProvider(create: (_) => WallpaperProvider()),
+    ChangeNotifierProvider(create: (_) => CollectionProvider()),
     ChangeNotifierProvider(create: (_) => ThemeProvider()),
   ], child: const MyApp()));
 }

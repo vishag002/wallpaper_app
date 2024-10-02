@@ -1,134 +1,208 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:wallpaper_app/controller/collection_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 
 class Tile extends StatelessWidget {
   final int index;
 
-  const Tile({Key? key, required this.index}) : super(key: key);
+  const Tile({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
     return index.isEven
-        ? _buildImageTile(context)
-        : _buildCollectionTile(context);
+        ? imageContainer(context)
+        : collectionContainer(context);
   }
 
-  Widget _buildImageTile(BuildContext context) {
+  Widget imageContainer(BuildContext context) {
     return Consumer<WallpaperProvider>(
-      builder: (context, provider, _) {
+      builder: (context, provider, child) {
         if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (provider.errorMessage != null) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.transparent,
+            ),
+          );
+        } else if (provider.errorMessage != null) {
           return Center(child: Text(provider.errorMessage!));
-        }
-        if (provider.wallpapers != null &&
+        } else if (provider.wallpapers != null &&
             provider.wallpapers!.isNotEmpty &&
             index ~/ 2 < provider.wallpapers!.length) {
-          return _buildWallpaperTile(provider.wallpapers![index ~/ 2]);
+          final wallpaper = provider.wallpapers![index ~/ 2];
+          return Stack(
+            alignment: Alignment.bottomCenter,
+            fit: StackFit.passthrough,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * .3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      BlurHash(
+                        hash: wallpaper.blurHash ??
+                            'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
+                        imageFit: BoxFit.cover,
+                      ),
+                      Image.network(
+                        wallpaper.urls?.regular ?? '',
+                        filterQuality: FilterQuality.high,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return BlurHash(
+                            hash: wallpaper.blurHash ??
+                                'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                              child: Text('Failed to load image'));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * .05,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(.7),
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(10)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          wallpaper.user?.name ?? 'Unknown',
+                          style: TextStyle(color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        print("iconbutton pressed for image ${wallpaper.id}");
+                        //on pressed save to favourites
+                      },
+                      icon: Icon(
+                        Icons.favorite_border,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        } else {
+          return Center(child: const Text('No image available'));
         }
-        return const Center(child: Text('No image available'));
       },
     );
   }
 
-  Widget _buildWallpaperTile(wallpaper) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      fit: StackFit.passthrough,
-      children: [
-        _buildWallpaperImage(wallpaper),
-        _buildWallpaperInfo(wallpaper),
-      ],
-    );
-  }
-
-  Widget _buildWallpaperImage(wallpaper) {
-    return Container(
-      height: 300, // Adjust as needed
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            BlurHash(
-              hash: wallpaper.blurHash ?? 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
-              imageFit: BoxFit.cover,
+  Widget collectionContainer(BuildContext context) {
+    return Consumer<CollectionProvider>(
+      builder: (context, provider, child) {
+        if (provider.isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.transparent,
             ),
-            Image.network(
-              wallpaper.urls?.regular ?? '',
-              filterQuality: FilterQuality.high,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return BlurHash(
-                  hash: wallpaper.blurHash ?? 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(child: Text('Failed to load image'));
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWallpaperInfo(wallpaper) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(.7),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(15)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text(
-                wallpaper.user?.name ?? 'Unknown',
-                style: const TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
+          );
+        } else if (provider.error.isNotEmpty) {
+          return Center(child: Text(provider.error));
+        } else if (provider.collections.isEmpty ||
+            index ~/ 2 >= provider.collections.length) {
+          return const Center(child: Text('No collection available'));
+        } else {
+          final collection = provider.collections[index ~/ 2];
+          return Stack(
+            alignment: Alignment.bottomCenter,
+            fit: StackFit.passthrough,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * .15,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      BlurHash(
+                        hash: collection.coverPhoto?.blurHash ??
+                            'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
+                        imageFit: BoxFit.cover,
+                      ),
+                      Image.network(
+                        collection.coverPhoto?.urls?.regular ?? '',
+                        filterQuality: FilterQuality.high,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return BlurHash(
+                            hash: collection.coverPhoto?.blurHash ??
+                                'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                              child: Text('Failed to load image'));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              // TODO: Implement save to favorites
-              print("Save to favorites: ${wallpaper.id}");
-            },
-            icon: const Icon(
-              Icons.favorite_border,
-              size: 20,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCollectionTile(BuildContext context) {
-    return Container(
-      height: 150, // Adjust as needed
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.grey[800],
-      ),
-      child: Center(
-        child: Text(
-          'Collection ${(index + 1) ~/ 2}',
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-        ),
-      ),
+              Container(
+                height: MediaQuery.of(context).size.height * .05,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(.7),
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(10)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          collection.title ?? 'Unknown Collection',
+                          style: TextStyle(color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${collection.totalPhotos ?? 0} photos',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        }
+      },
     );
   }
 }
