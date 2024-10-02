@@ -8,7 +8,6 @@ class WallpaperService {
     // Update the URL with page and per_page parameters
     var uri = Uri.parse(
         'https://api.unsplash.com/photos/?client_id=eAVunQXqeEpiTSwpCeYLfhse864BVP5qufx74IORWjI&page=$page&per_page=$perPage');
-
     try {
       var response = await client.get(uri);
       print("Status Code: ${response.statusCode}");

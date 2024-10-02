@@ -122,7 +122,7 @@ class WallpaperViewScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                Get.to(ArtistProfileScreen());
+                //  Get.to(ArtistProfileScreen());
               },
               child: Row(
                 children: [

@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:wallpaper_app/model/collection_api_model.dart';
 
 class ArtistProfileScreen extends StatelessWidget {
-  const ArtistProfileScreen({super.key});
+  final CollectionClass collection;
+  const ArtistProfileScreen({Key? key, required this.collection})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Artist Profile"),
+        title: Text(collection.title ?? "Collection Details"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -19,37 +24,40 @@ class ArtistProfileScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage(
-                        'assets/profile_image.png'), // Placeholder for artist profile image
+                    backgroundImage: CachedNetworkImageProvider(
+                      collection.user?.profileImage?.medium ?? '',
+                    ),
                   ),
                   const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Artist Name",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          collection.user?.name ?? "Unknown Artist",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Bio: This is a short bio of the artist.",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
+                        const SizedBox(height: 4),
+                        Text(
+                          collection.user?.bio ?? "No bio available",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: theme.onSurface.withOpacity(0.6),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Followers: 1.2M",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
+                        const SizedBox(height: 4),
+                        Text(
+                          "Total Photos: ${collection.totalPhotos}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: theme.onSurface.withOpacity(0.6),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -57,39 +65,61 @@ class ArtistProfileScreen extends StatelessWidget {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: const Text(
-                "Gallery",
-                style: TextStyle(
+              child: Text(
+                "Collection: ${collection.title ?? 'Untitled'}",
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                collection.description ?? "No description available",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: theme.onSurface.withOpacity(0.8),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             GridView.builder(
-              shrinkWrap:
-                  true, // Important to avoid grid view expanding infinitely
-              physics:
-                  const NeverScrollableScrollPhysics(), // Prevent scrolling conflict
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 2 columns
+                crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 1, // Square containers
+                childAspectRatio: 0.75,
               ),
               padding: const EdgeInsets.all(16.0),
-              itemCount: 10, // Display 10 items
+              itemCount: collection.previewPhotos?.length ?? 0,
               itemBuilder: (context, index) {
+                final photo = collection.previewPhotos?[index];
                 return Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey[300], // Placeholder color
                     borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
-                  child: const Center(
-                    child: Text(
-                      "Image",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 16,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      imageUrl: photo?.urls?.regular ?? '',
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey[300],
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[300],
+                        child: const Center(child: Icon(Icons.error)),
                       ),
                     ),
                   ),

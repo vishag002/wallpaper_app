@@ -12,15 +12,6 @@ class MyScreen extends StatefulWidget {
 
 class _MyScreenState extends State<MyScreen> {
   @override
-  void initState() {
-    super.initState();
-    // Fetch wallpapers when the screen is first built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<WallpaperProvider>().fetchWallpapers();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

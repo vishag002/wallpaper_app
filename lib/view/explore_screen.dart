@@ -8,7 +8,7 @@ import 'package:wallpaper_app/controller/carousel_controller.dart';
 import 'package:wallpaper_app/controller/collection_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/utilis/text_const.dart';
-import 'package:wallpaper_app/view/demo2.dart';
+import 'package:wallpaper_app/view/user_screen.dart';
 import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
 
@@ -227,7 +227,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
             wallpaperProvider.wallpapers!.length * 2,
             (index) => InkWell(
               onTap: () {
-                _handleItemTap(index, wallpaperProvider);
+                _handleItemTap(index, wallpaperProvider, CollectionProvider());
               },
               child: Tile(index: index),
             ),
@@ -237,14 +237,18 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  void _handleItemTap(int index, WallpaperProvider provider) {
-    if (index.isEven && index ~/ 2 < (provider.wallpapers?.length ?? 0)) {
+  void _handleItemTap(int index, WallpaperProvider _wallpaperProvider,
+      CollectionProvider _collectionProvider) {
+    if (index.isEven &&
+        index ~/ 2 < (_wallpaperProvider.wallpapers?.length ?? 0)) {
       print("Image container pressed at index: $index");
-      Get.to(() =>
-          WallpaperViewScreen(wallpaper: provider.wallpapers![index ~/ 2]));
+      Get.to(() => WallpaperViewScreen(
+          wallpaper: _wallpaperProvider.wallpapers![index ~/ 2]));
     } else {
       print("Image container pressed at index: $index");
-      Get.to(() => CollectionListView());
+      Get.to(() => ArtistProfileScreen(
+            collection: _collectionProvider.collections[index ~/ 2],
+          ));
     }
   }
 }

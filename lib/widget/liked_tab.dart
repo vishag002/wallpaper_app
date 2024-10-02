@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
-import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 
 class LikedTab extends StatelessWidget {
   const LikedTab({super.key});
