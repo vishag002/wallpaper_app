@@ -86,7 +86,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         controller: scrollController,
         slivers: [
           SliverAppBar(
-            expandedHeight: MediaQuery.of(context).size.height / 2.64,
+            expandedHeight: MediaQuery.of(context).size.height / 2.48,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               titlePadding: EdgeInsets.only(bottom: 30),

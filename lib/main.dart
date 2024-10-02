@@ -12,6 +12,13 @@ import 'package:wallpaper_app/view/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+    ),
+  );
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => CarouselControllerProvider()),

@@ -1,15 +1,45 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
 import 'package:get/get.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:wallpaper_app/model/api_model.dart';
 import 'package:wallpaper_app/utilis/text_const.dart';
-import 'package:wallpaper_app/view/user_screen.dart';
 
-class WallpaperViewScreen extends StatelessWidget {
+class WallpaperViewScreen extends StatefulWidget {
   final MyClass wallpaper;
 
-  const WallpaperViewScreen({Key? key, required this.wallpaper})
-      : super(key: key);
+  const WallpaperViewScreen({super.key, required this.wallpaper});
+
+  @override
+  State<WallpaperViewScreen> createState() => _WallpaperViewScreenState();
+}
+
+class _WallpaperViewScreenState extends State<WallpaperViewScreen> {
+  Future<void> _setWallpaper(String url, int location) async {
+    try {
+      var file = await DefaultCacheManager().getSingleFile(url);
+      final bool result =
+          await WallpaperManager.setWallpaperFromFile(file.path, location);
+      print("Wallpaper set: $result");
+    } on PlatformException {
+      print("Failed to set wallpaper.");
+    }
+  }
+
+  Future<void> setHomeScreenWallpaper(String url) async {
+    await _setWallpaper(url, WallpaperManager.HOME_SCREEN);
+  }
+
+  Future<void> setLockScreenWallpaper(String url) async {
+    await _setWallpaper(url, WallpaperManager.LOCK_SCREEN);
+  }
+
+  Future<void> setBothScreenWallpaper(String url) async {
+    await _setWallpaper(url, WallpaperManager.BOTH_SCREEN);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,22 +63,20 @@ class WallpaperViewScreen extends StatelessWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        // BlurHash placeholder while the image is loading
                         BlurHash(
-                          hash: wallpaper.blurHash ??
+                          hash: widget.wallpaper.blurHash ??
                               'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
                           imageFit: BoxFit.cover,
                         ),
-                        // The actual image
                         Image.network(
-                          wallpaper.urls?.regular ?? '',
+                          widget.wallpaper.urls?.regular ?? '',
                           filterQuality: FilterQuality.high,
                           fit: BoxFit.cover,
                           loadingBuilder: (BuildContext context, Widget child,
                               ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) return child;
                             return BlurHash(
-                              hash: wallpaper.blurHash ??
+                              hash: widget.wallpaper.blurHash ??
                                   'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
                             );
                           },
@@ -69,7 +97,6 @@ class WallpaperViewScreen extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
-                          print("iconbutton pressed");
                           Get.back();
                         },
                         icon: Icon(
@@ -98,7 +125,7 @@ class WallpaperViewScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    wallpaper.user?.name ?? "Unknown",
+                    widget.wallpaper.user?.name ?? "Unknown",
                     style: TextStyles.title.copyWith(
                       color: theme.secondary,
                       fontWeight: FontWeight.w600,
@@ -110,11 +137,11 @@ class WallpaperViewScreen extends StatelessWidget {
                           onPressed: () {
                             // Implement add to favorites functionality
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.favorite_border,
                             size: 30,
                           )),
-                      Text("${wallpaper.likes ?? 0}") // Like count
+                      Text("${widget.wallpaper.likes ?? 0}") // Like count
                     ],
                   )
                 ],
@@ -122,30 +149,30 @@ class WallpaperViewScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                //  Get.to(ArtistProfileScreen());
+                // Get.to(ArtistProfileScreen());
               },
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 30,
                     backgroundImage: NetworkImage(
-                        wallpaper.user?.profileImage?.medium ?? ''),
+                        widget.wallpaper.user?.profileImage?.medium ?? ''),
                   ),
                   SizedBox(width: 10),
-                  Text(wallpaper.user?.username ?? "Unknown"),
+                  Text(widget.wallpaper.user?.username ?? "Unknown"),
                 ],
               ),
             ),
-            Text(wallpaper.altDescription ?? "No description available"),
-            Text("Created at: ${wallpaper.createdAt?.toString() ?? 'Unknown'}"),
+            Text(widget.wallpaper.altDescription ?? "No description available"),
+            Text(
+                "Created at: ${widget.wallpaper.createdAt?.toString() ?? 'Unknown'}"),
             SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 InkWell(
                   onTap: () {
-                    // Implement full resolution download
-                    print("Full resolution image downloaded");
+                    showBottomSheet(context);
                   },
                   child: Container(
                     height: 70,
@@ -160,32 +187,7 @@ class WallpaperViewScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                         SizedBox(width: 10),
-                        Text("Full resolution",
-                            style: TextStyle(color: Colors.white))
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    // Implement SD quality download
-                    print("SD quality image downloaded");
-                  },
-                  child: Container(
-                    height: 70,
-                    width: 150,
-                    color: Colors.blue,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.download,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 10),
-                        Text("SD quality",
-                            style: TextStyle(color: Colors.white))
+                        Text("Download", style: TextStyle(color: Colors.white))
                       ],
                     ),
                   ),
@@ -194,6 +196,89 @@ class WallpaperViewScreen extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  void showBottomSheet(context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => BottomSheetWidget(
+        setHomeWallpaper: () =>
+            setHomeScreenWallpaper(widget.wallpaper.urls?.regular ?? ''),
+        setLockWallpaper: () =>
+            setLockScreenWallpaper(widget.wallpaper.urls?.regular ?? ''),
+        setBothWallpaper: () =>
+            setBothScreenWallpaper(widget.wallpaper.urls?.regular ?? ''),
+      ),
+    );
+  }
+}
+
+class BottomSheetWidget extends StatelessWidget {
+  final VoidCallback setHomeWallpaper;
+  final VoidCallback setLockWallpaper;
+  final VoidCallback setBothWallpaper;
+
+  const BottomSheetWidget({
+    required this.setHomeWallpaper,
+    required this.setLockWallpaper,
+    required this.setBothWallpaper,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoActionSheet(
+      title: Text("Options"),
+      actions: [
+        CupertinoActionSheetAction(
+          child: Text(
+            "Download",
+            style: TextStyles.title.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          onPressed: () {},
+        ),
+        CupertinoActionSheetAction(
+          child: Text(
+            "Set as Home Screen Wallpaper",
+            style: TextStyles.title.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          onPressed: setHomeWallpaper,
+        ),
+        CupertinoActionSheetAction(
+          child: Text(
+            "Set as Lock Screen Wallpaper",
+            style: TextStyles.title.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          onPressed: setLockWallpaper,
+        ),
+        CupertinoActionSheetAction(
+          child: Text(
+            "Set as Both",
+            style: TextStyles.title.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          onPressed: setBothWallpaper,
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        child: Text(
+          "Cancel",
+          style: TextStyles.title.copyWith(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+        isDefaultAction: true,
+        onPressed: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }
