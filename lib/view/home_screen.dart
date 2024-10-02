@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
@@ -6,8 +7,49 @@ import 'package:wallpaper_app/utilis/text_const.dart';
 import 'package:wallpaper_app/widget/liked_tab.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final VoidCallback showNavigation;
+  final VoidCallback hideNavigation;
+  const HomeScreen(
+      {super.key, required this.showNavigation, required this.hideNavigation});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    scrollController.addListener(
+      () {
+        if (scrollController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          widget.showNavigation();
+        } else {
+          widget.hideNavigation();
+        }
+      },
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    scrollController.removeListener(
+      () {
+        if (scrollController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          widget.showNavigation();
+        } else {
+          widget.hideNavigation();
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +80,10 @@ class HomeScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            expandedWidget(context),
-            LikedTab(),
+            expandedWidget(context, scrollController),
+            LikedTab(
+              scrollController: scrollController,
+            ),
             const Center(child: Text('Library Content')),
           ],
         ),
@@ -48,11 +92,12 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-Widget expandedWidget(BuildContext context) {
+Widget expandedWidget(BuildContext context, scrollController) {
   final provider = Provider.of<WallpaperProvider>(context, listen: false);
   return LayoutBuilder(
     builder: (BuildContext context, BoxConstraints constraints) {
       return SingleChildScrollView(
+        controller: scrollController,
         child: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10),
           child: StaggeredGrid.count(

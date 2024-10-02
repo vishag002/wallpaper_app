@@ -3,13 +3,17 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class LikedTab extends StatelessWidget {
-  const LikedTab({super.key});
+  final ScrollController scrollController;
+  const LikedTab({super.key, required this.scrollController});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: MasonryGridView.count(
+        controller: scrollController,
         crossAxisCount: 2,
         mainAxisSpacing: 15,
         crossAxisSpacing: 15,

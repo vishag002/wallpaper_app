@@ -25,6 +25,7 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   ScrollController scrollController = ScrollController();
   //
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
@@ -89,7 +90,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
             expandedHeight: MediaQuery.of(context).size.height / 2.48,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              titlePadding: EdgeInsets.only(bottom: 30),
+              titlePadding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * .06),
 
               // Dynamically updating the title based on the current carousel index
               title: Consumer<CarouselControllerProvider>(

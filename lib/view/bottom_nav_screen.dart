@@ -29,7 +29,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       body: IndexedStack(
         index: _currentIndex,
         children: [
-          HomeScreen(),
+          HomeScreen(
+            hideNavigation: hideNav,
+            showNavigation: showNav,
+          ),
           ExploreScreen(
             hideNavigation: hideNav,
             showNavigation: showNav,
