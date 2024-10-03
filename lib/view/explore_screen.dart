@@ -8,6 +8,7 @@ import 'package:wallpaper_app/controller/carousel_controller.dart';
 import 'package:wallpaper_app/controller/collection_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/utilis/text_const.dart';
+import 'package:wallpaper_app/view/demo2.dart';
 import 'package:wallpaper_app/view/user_screen.dart';
 import 'package:wallpaper_app/view/wallpaper_view_screen.dart';
 import 'package:wallpaper_app/widget/staggered_grid_wid.dart';
@@ -194,19 +195,24 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   //search button
   Widget searchButton() {
-    return const SliverToBoxAdapter(
-      child: SizedBox(
-        height: 60,
-        width: 150,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search),
-            Text(
-              "Search",
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
+    return SliverToBoxAdapter(
+      child: InkWell(
+        onTap: () {
+          Get.to(FavoritesScreen());
+        },
+        child: SizedBox(
+          height: 60,
+          width: 150,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.search),
+              Text(
+                "Search",
+                style: TextStyle(fontSize: 18),
+              ),
+            ],
+          ),
         ),
       ),
     );

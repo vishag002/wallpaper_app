@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:wallpaper_app/controller/collection_controller.dart';
+import 'package:wallpaper_app/controller/favourite_controller.dart';
 import 'package:wallpaper_app/controller/wallpaper_controller.dart';
 import 'package:wallpaper_app/view/user_screen.dart';
 
@@ -20,16 +21,16 @@ class Tile extends StatelessWidget {
   }
 
   Widget imageContainer(BuildContext context) {
-    return Consumer<WallpaperProvider>(
-      builder: (context, provider, child) {
-        if (provider.isLoading) {
+    return Consumer2<WallpaperProvider, FavoriteProvider>(
+      builder: (context, wallpaperProvider, favoriteProvider, child) {
+        if (wallpaperProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (provider.errorMessage != null) {
-          return Center(child: Text(provider.errorMessage!));
-        } else if (provider.wallpapers != null &&
-            provider.wallpapers!.isNotEmpty &&
-            index ~/ 2 < provider.wallpapers!.length) {
-          final wallpaper = provider.wallpapers![index ~/ 2];
+        } else if (wallpaperProvider.errorMessage != null) {
+          return Center(child: Text(wallpaperProvider.errorMessage!));
+        } else if (wallpaperProvider.wallpapers != null &&
+            wallpaperProvider.wallpapers!.isNotEmpty &&
+            index ~/ 2 < wallpaperProvider.wallpapers!.length) {
+          final wallpaper = wallpaperProvider.wallpapers![index ~/ 2];
           return Stack(
             alignment: Alignment.bottomCenter,
             fit: StackFit.passthrough,
@@ -75,11 +76,12 @@ class Tile extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        print("iconbutton pressed for image ${wallpaper.id}");
-                        //on pressed save to favourites
+                        favoriteProvider.toggleFavorite(wallpaper.id ?? '');
                       },
                       icon: Icon(
-                        Icons.favorite_border,
+                        favoriteProvider.isFavorite(wallpaper.id ?? '')
+                            ? Icons.favorite
+                            : Icons.favorite_border,
                         size: 20,
                         color: Colors.white,
                       ),
